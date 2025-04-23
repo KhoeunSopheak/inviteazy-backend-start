@@ -67,3 +67,53 @@ export const validateIdInURLParam = (
     next(error);
   }
 };
+
+
+
+const statusSchema = z.object({
+  status: z.enum(["accept", "maybe", "no", "busy"]),
+});
+
+export const validateStatus = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  try {
+    statusSchema.parse(req.body);
+    next();
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({ message: error.errors[0].message });
+      return;
+    }
+    next(error);
+  }
+};
+
+const inviteStatusEnum = z.enum(["pending"]);
+const createInviteSchema = z.object({
+  userId: z.string().uuid({ message: "Invalid userId format" }),
+  status: inviteStatusEnum,
+  qrCode: z.string().url({ message: "Invalid QR code URL" }),
+  isCheckIn: z.boolean(),
+  checkInAt: z.null().or(z.string().datetime()).optional(),
+});
+
+export const validateInviteBody = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  try {
+    createInviteSchema.parse(req.body);
+    next();
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({ message: error.errors[0].message });
+      return;
+    }
+    next(error);
+  }
+};
+
