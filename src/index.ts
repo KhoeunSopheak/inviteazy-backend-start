@@ -49,7 +49,7 @@ app.use(loggingMiddleware);
 // Routes
 app.use("/api/users", userRoutes(userController));
 app.use("/api/auth", authRoutes(authController));
-app.use("/api/invites", inviteRoute(inviteController));
+app.use("/api/v1", inviteRoute(inviteController));
 
 // Handle Errors
 app.use(errorMiddleware);

@@ -3,43 +3,65 @@ import { IInvitation, IInvitationRepository } from "../../interfaces/inviteInter
 import { queryWithLogging } from "./utils";
 
 export class PostgresInvitationRepository implements IInvitationRepository {
-  constructor(private pool: Pool) {}
+  constructor(private pool: Pool) { }
 
   async create(invitation: Omit<IInvitation, "id">): Promise<IInvitation> {
-    const { eventId, inviteeId, status } = invitation;
+    const { eventId, userId, status, qrCode, isCheckIn, checkInAt } = invitation;
     const { rows } = await queryWithLogging(
       this.pool,
-      `INSERT INTO invitations (event_id, invitee_id, status)
-       VALUES ($1, $2, $3)
-       RETURNING id, event_id AS "eventId", invitee_id AS "inviteeId", status, created_at AS "createdAt"`,
-      [eventId, inviteeId, status]
+      `INSERT INTO invitations (
+     event_id,
+     user_id,
+     status,
+     qr_code,
+     is_check_in,
+     check_in_at
+   )
+   VALUES ($1, $2, $3, $4, $5, $6)
+   RETURNING id, event_id, user_id, status, qr_code, is_check_in, check_in_at, created_at`,
+      [eventId, userId, status, qrCode, isCheckIn, checkInAt]
     );
     return rows[0];
   }
 
-  async Status(
-    inviteeId: string,
-    eventId: string,
-    status: IInvitation["status"]
-  ): Promise<IInvitation | null> {
+  async findByEventIdAndUserId(eventId: string, userId: string): Promise<IInvitation | null> {
+    const result = await this.pool.query(
+      `SELECT * FROM invitations WHERE event_id = $1 AND user_id = $2`,
+      [eventId, userId]
+    );
+    return result.rows[0] || null;
+  }
+
+  async findInvitationById(eventId: string): Promise<IInvitation | null> {
     const { rows } = await queryWithLogging(
       this.pool,
-      `UPDATE invitations
-       SET status = $1
-       WHERE invitee_id = $2 AND event_id = $3
-       RETURNING id, event_id AS "eventId", invitee_id AS "inviteeId", status, created_at AS "createdAt"`,
-      [status, inviteeId, eventId]
+      `SELECT user_id, status
+       FROM invitations
+       WHERE event_id = $1`,
+      [eventId]
     );
     return rows[0] || null;
   }
 
-  async findByInviteeId(inviteeId: string): Promise<IInvitation[]> {
+  async updateStatusById(id: string, status: IInvitation["status"]): Promise<IInvitation> {
     const { rows } = await queryWithLogging(
       this.pool,
-      `SELECT id, event_id AS "eventId", invitee_id AS "inviteeId", status, created_at AS "createdAt"
-       FROM invitations
-       WHERE invitee_id = $1`,
-      [inviteeId]
+      `
+        UPDATE invitations
+        SET status = $1
+        WHERE id = $2
+        RETURNING *
+      `,
+      [status, id]
+    );
+    return rows[0] || null;
+  }
+
+  async findUserInvitation(): Promise<IInvitation[]> {
+    const { rows } = await queryWithLogging(
+      this.pool,
+      `SELECT id, event_id, user_id, status, qr_code, is_check_in, check_in_at, created_at
+       FROM invitations`
     );
     return rows;
   }
