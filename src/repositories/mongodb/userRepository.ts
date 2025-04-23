@@ -17,7 +17,6 @@ export class MongoUserRepository implements IUserRepository {
       role,
     }));
   }
-
   async findById(userId: string): Promise<IUserWithoutPassword | null> {
     const result = await UserModel.findById(userId);
     if (!result) return null;
