@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 
 export const connectMongoDB = async () => {
   try {
-    const URI = process.env.MONGO_DB ?? "";
+
+    const URI = process.env.MONG_DB ?? "";
     const connOptions = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
