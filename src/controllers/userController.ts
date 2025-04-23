@@ -57,7 +57,8 @@ export class UserController {
         .status(201)
         .json({ message: "A new user was created.", data: newUser });
     } catch (err) {
-      console.log(err);
+
+      console.log("-------------- ",err);
       next(err);
     }
   }
