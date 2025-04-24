@@ -9,11 +9,12 @@ export class InviteController {
     this.inviteService = inviteService;
   }
 
-  async createInvite(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async createInvite(req: Request, res: Response, next: NextFunction) {
     try {
-      const {userId, status, qrCode, isCheckIn, checkInAt}: Omit<IInvitation, "id" | "eventId"> = req.body;
+      const {inviteeId, status, qrCode, isCheckIn, checkInAt, gift}: Omit<IInvitation, "id" | "eventId"> = req.body;
       const {eventId} = req.params;
-      const existingInvite = await this.inviteService.getByEventIdAndUserId(eventId, userId);
+      console.log("======>",eventId);
+      const existingInvite = await this.inviteService.getByEventIdAndUserId(eventId, inviteeId);
       if (existingInvite) {
         res.status(409).json({
           message: "User is already invited to this event.",
@@ -22,11 +23,12 @@ export class InviteController {
       }
       const newInvites = await this.inviteService.createInvite({
         eventId,
-        userId,
+        inviteeId,
         status,
         qrCode,
         isCheckIn,
         checkInAt,
+        gift
       });
       res.status(201).json({
         message: "Invite was created.",
@@ -40,7 +42,6 @@ export class InviteController {
   
   async getUserInvitaion(req: Request, res: Response, next: NextFunction) {
     try {
-      console.log(req.baseUrl, req.originalUrl);
       const result = await this.inviteService.getUserInvitations();
       res.json({ message: "Get all users invited.", data: result });
       return;
@@ -73,8 +74,33 @@ export class InviteController {
       next(error);
     }
   }
+
+  async countStatusByEventId(req: Request, res: Response, next: NextFunction) {
+    try{
+    const cacheKey = `invitation:${req.method}:${req.originalUrl}`;
+      const cacheData = await redisCache.get(cacheKey);
+      if (cacheData) {
+        res.json({
+          message: "Cache: Get invitee by eventId",
+          data: JSON.parse(cacheData),
+        });
+        return;
+      }
+      const { eventId } = req.params;
+      console.log(eventId);
+      const result = await this.inviteService.countStatusByEventId(eventId);
+      if (result) {
+        await redisCache.set(cacheKey, JSON.stringify(result), 360);
+        res.json({ message: "Api: Get total invitatees ", data: result });
+      } else {
+        res.status(404).json({ message: "Invitee not found" });
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
   
-  async updateStatusById(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async updateStatusById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       const { status } = req.body;

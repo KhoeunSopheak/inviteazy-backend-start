@@ -30,7 +30,7 @@ const app = express();
 const port = 3003;
 
 // Switch connection to database
-connectMongoDB();
+// connectMongoDB();
 const pgPool = connectPostgresDb();
 // const mysqlPool = connectMysqlDb();
 
@@ -40,13 +40,12 @@ const userRepository = new PostgresUserRepository(pgPool);
 
 // const eventRepository = new PostgresEventRepository(pgPool);
 const eventRepository = new MongoEventRepository();
+const inviteRepository = new PostgresInvitationRepository(pgPool);
 
 // Services
 const userService = new UserService(userRepository);
 const eventService =  new EventService(eventRepository);
-
-// const userRepository = new PostgresUserRepository(mysqlPool);
-const inviteRepository = new PostgresInvitationRepository(pgPool);
+const inviteService = new InviteService(inviteRepository);
 
 
 // Controllers

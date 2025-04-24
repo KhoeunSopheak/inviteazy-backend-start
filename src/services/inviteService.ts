@@ -3,6 +3,7 @@ import {
   IInvitationRepository,
   IInvitationService,
 } from "../interfaces/inviteInterface";
+import { InvitationStatus } from "../utils/enum";
 
 export class InviteService implements IInvitationService {
   private inviteRepository: IInvitationRepository;
@@ -30,6 +31,14 @@ export class InviteService implements IInvitationService {
       throw Object.assign(new Error("Invitation not found"), { status: 404 });
     }
     return invitation;
+  }
+
+  async countStatusByEventId(eventId: string): Promise<Record<InvitationStatus, number>> {
+    const countStatus = await this.inviteRepository.countStatusByEventId(eventId);
+    if (!countStatus) {
+      throw Object.assign(new Error("Invitees not found"), { status: 404 });
+    }
+    return countStatus;
   }
 
   async updateStatusById(id: string, status: IInvitation["status"]): Promise<IInvitation> {

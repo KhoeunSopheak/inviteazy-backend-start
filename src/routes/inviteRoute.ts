@@ -15,6 +15,7 @@ export default function inviteRoutes(controller: InviteController): Router {
   router.post("/events/:eventId",validateInviteBody, controller.createInvite.bind(controller));
   router.get("/invitations", controller.getUserInvitaion.bind(controller));
   router.get("/invitation/:eventId", controller.getInvitationById.bind(controller));
+  router.get("/events/:eventId/status", controller.countStatusByEventId.bind(controller));
   router.patch("/invitations/:id",validateStatus, controller.updateStatusById.bind(controller));
   
   return router;
