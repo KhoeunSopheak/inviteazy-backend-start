@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS invitations (
   is_check_in BOOLEAN DEFAULT FALSE,
   check_in_at TIMESTAMP,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  check_out_at TIMESTAMP,
   gift VARCHAR(255),
 );
 
