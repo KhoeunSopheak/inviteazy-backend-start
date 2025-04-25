@@ -11,7 +11,7 @@ export class InviteController {
 
   async createInvite(req: Request, res: Response, next: NextFunction) {
     try {
-      const {inviteeId, status, qrCode, isCheckIn, checkInAt, gift}: Omit<IInvitation, "id" | "eventId"> = req.body;
+      const {inviteeId, status, isCheckIn, checkInAt, isCheckOut, checkOutAt, gift}: Omit<IInvitation, "id" | "eventId" | "qrCode"> = req.body;
       const {eventId} = req.params;
       console.log("======>",eventId);
       const existingInvite = await this.inviteService.getByEventIdAndUserId(eventId, inviteeId);
@@ -21,6 +21,7 @@ export class InviteController {
         });
         return;
       }
+      const qrCode = `https://e-invitation.com/qr/event=${eventId}/invitee=${inviteeId}`;
       const newInvites = await this.inviteService.createInvite({
         eventId,
         inviteeId,
@@ -28,6 +29,8 @@ export class InviteController {
         qrCode,
         isCheckIn,
         checkInAt,
+        isCheckOut,
+        checkOutAt,
         gift
       });
       res.status(201).json({
@@ -102,9 +105,9 @@ export class InviteController {
   
   async updateStatusById(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id } = req.params;
+      const { eventId } = req.params;
       const { status } = req.body;
-      const updatedInvite = await this.inviteService.updateStatusById(id, status);
+      const updatedInvite = await this.inviteService.updateStatusById(eventId, status);
       if (!updatedInvite) {
         res.status(404).json({ message: "Invitation not found" });
       }

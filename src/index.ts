@@ -11,13 +11,11 @@ import { PostgresUserRepository } from "./repositories/postgres/userRepository";
 import { loggingMiddleware } from "./middlewares/loggingMiddleware";
 import { connectMongoDB } from "./config/mongodb/db";
 import { MongoUserRepository } from "./repositories/mongodb/userRepository";
-
 import { PostgresEventRepository } from "./repositories/postgres/eventRepository";
 import eventRoutes from './routes/eventRoute';
 import { EventService } from "./services/eventService";
 import { EventController } from "./controllers/eventController";
 import { MongoEventRepository } from "./repositories/mongodb/eventRepository";
-
 import { connectMysqlDb } from "./config/mysqldb/db";
 import { InviteController } from "./controllers/inviteController";
 import { InviteService } from "./services/inviteService";
@@ -51,9 +49,7 @@ const inviteService = new InviteService(inviteRepository);
 // Controllers
 const userController = new UserController(userService);
 const authController = new AuthController(userService);
-
 const eventController = new EventController(eventService);
-
 const inviteController = new InviteController(inviteService);
 
 
@@ -64,9 +60,7 @@ app.use(loggingMiddleware);
 // Routes
 app.use("/api/users", userRoutes(userController));
 app.use("/api/auth", authRoutes(authController));
-
 app.use('/api/events', eventRoutes(eventController));
-
 app.use("/api/v1", inviteRoute(inviteController));
 
 

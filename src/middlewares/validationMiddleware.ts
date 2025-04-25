@@ -95,9 +95,10 @@ const inviteStatusEnum = z.enum(["pending"]);
 const createInviteSchema = z.object({
   inviteeId: z.string().uuid({ message: "Invalid userId format" }),
   status: inviteStatusEnum,
-  qrCode: z.string().url({ message: "Invalid QR code URL" }),
   isCheckIn: z.boolean(),
   checkInAt: z.null().or(z.string().datetime()).optional(),
+  isCheckOut: z.boolean(),
+  checkOutAt: z.null().or(z.string().datetime()).optional(),
 });
 
 export const validateInviteBody = (
