@@ -48,7 +48,14 @@ export class InviteService implements IInvitationService {
     }
     return updated;
   }
-
+  async createCheckin(eventId: string, inviteeId: string): Promise<IInvitation> {
+    const checkin = await this.inviteRepository.createCheckin(eventId, inviteeId);
+    if (!checkin) {
+      throw new Error("Check-in failed.");
+    }
+    return checkin;
+  }
+  
 }
 
 

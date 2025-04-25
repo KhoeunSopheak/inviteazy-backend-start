@@ -11,6 +11,7 @@ export interface IInvitation {
   isCheckOut: boolean;
   checkOutAt: Date | null;
   gift: string | null;
+  
 }
 
 export interface IInvitationRepository {
@@ -20,6 +21,7 @@ export interface IInvitationRepository {
   findUserInvitation(): Promise<IInvitation[]>;
   findInvitationById(eventId: string): Promise<IInvitation[]>;
   countStatusByEventId(eventId: string): Promise<Record<InvitationStatus, number>>;
+  createCheckin(eventId: string, inviteeId: string): Promise<IInvitation>;
 }
 
 export interface IInvitationService {
@@ -29,4 +31,5 @@ export interface IInvitationService {
   getUserInvitations(): Promise<IInvitation[]>;
   getInvitationById(eventId: string): Promise<IInvitation[]>;
   countStatusByEventId(eventId: string): Promise<Record<InvitationStatus, number>>;
+  createCheckin(eventId: string, inviteeId: string): Promise<IInvitation>;
 }

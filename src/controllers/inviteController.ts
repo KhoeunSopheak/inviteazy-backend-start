@@ -118,4 +118,18 @@ export class InviteController {
       next(error);
     }
   }
+
+  async createCheckin(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { eventId, inviteeId } = req.params;
+      console.log("Event ID:", eventId);
+      console.log("Invitee ID:", inviteeId);
+      const checkin = await this.inviteService.createCheckin(eventId, inviteeId);
+      res.json(checkin);
+      return;
+    } catch (error) {
+      console.error("Error check-in:", error);
+      next(error);
+    }
+  }
 }
