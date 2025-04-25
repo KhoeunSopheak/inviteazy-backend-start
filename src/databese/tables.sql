@@ -2,12 +2,14 @@
 
 CREATE TABLE IF NOT EXISTS invitations (
   id SERIAL PRIMARY KEY,
-  eventId UUID NOT NULL,
-  userId UUID NOT NULL,
+  event_id UUID NOT NULL,
+  invitee_id UUID NOT NULL,
   status VARCHAR(10) CHECK (status IN ('accept', 'maybe', 'no', 'busy')) NOT NULL,
-  qrCode TEXT NOT NULL,
-  isCheckIn BOOLEAN DEFAULT FALSE,
-  checkInAt TIMESTAMP,
+  qr_code TEXT NOT NULL,
+  is_check_in BOOLEAN DEFAULT FALSE,
+  check_in_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  gift VARCHAR(255),
 );
 
 ALTER TABLE invitations ADD COLUMN gift VARCHAR(255);

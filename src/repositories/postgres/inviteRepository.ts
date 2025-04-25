@@ -5,7 +5,6 @@ import { InvitationStatus } from "../../utils/enum";
 
 export class PostgresInvitationRepository implements IInvitationRepository {
   constructor(private pool: Pool) { }
-
   async create(invitation: Omit<IInvitation, "id">): Promise<IInvitation> {
     const { eventId, inviteeId, status, qrCode, isCheckIn, checkInAt, gift } = invitation;
     const { rows } = await queryWithLogging(
@@ -100,5 +99,21 @@ export class PostgresInvitationRepository implements IInvitationRepository {
        FROM invitations`
     );
     return rows;
+  }
+
+  async createCheckin(eventId: string, inviteeId: string): Promise<IInvitation> {
+    const { rows } = await queryWithLogging(
+      this.pool,
+      `
+        UPDATE invitations
+        SET is_check_in = true, check_in_at = NOW()
+        WHERE event_id = $1 AND invitee_id = $2
+        RETURNING *`,
+      [eventId, inviteeId]
+    );
+    if (rows.length === 0) {
+      throw new Error("No invitation found for the given eventId and inviteeId");
+    }
+    return rows[0];
   }
 }
