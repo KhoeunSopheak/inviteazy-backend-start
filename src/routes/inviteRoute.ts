@@ -2,8 +2,6 @@ import { Router } from "express";
 import { InviteController } from "../controllers/inviteController";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import {
-  validateIdInURLParam,
-  validateUser,
   validateStatus,
   validateInviteBody
 } from "../middlewares/validationMiddleware";
@@ -17,6 +15,9 @@ export default function inviteRoutes(controller: InviteController): Router {
   router.get("/invitation/:eventId", controller.getInvitationById.bind(controller));
   router.get("/events/:eventId/status", controller.countStatusByEventId.bind(controller));
   router.patch("/invitations/:id",validateStatus, controller.updateStatusById.bind(controller));
+  router.patch("/invitations/:eventId",validateStatus, controller.updateStatusById.bind(controller));
+  router.get("/events/:eventId/status", controller.countStatusByEventId.bind(controller));
   router.patch("/checkin/:eventId/:inviteeId", controller.createCheckin.bind(controller));
+
   return router;
 }

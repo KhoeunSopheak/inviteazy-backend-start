@@ -6,7 +6,7 @@ import { InvitationStatus } from "../../utils/enum";
 export class PostgresInvitationRepository implements IInvitationRepository {
   constructor(private pool: Pool) { }
   async create(invitation: Omit<IInvitation, "id">): Promise<IInvitation> {
-    const { eventId, inviteeId, status, qrCode, isCheckIn, checkInAt, gift } = invitation;
+    const { eventId, inviteeId, status, qrCode, isCheckIn, checkInAt, isCheckOut, checkOutAt, gift } = invitation;
     const { rows } = await queryWithLogging(
       this.pool,
       `
@@ -17,23 +17,25 @@ export class PostgresInvitationRepository implements IInvitationRepository {
       qr_code,
       is_check_in,
       check_in_at,
+      is_check_out,
+      check_out_at,
       gift
    )
-   VALUES ($1, $2, $3, $4, $5, $6, $7)
-   RETURNING id, event_id, invitee_id, status, qr_code, is_check_in, check_in_at, gift, created_at`,
-      [eventId, inviteeId, status, qrCode, isCheckIn, checkInAt, gift]
+   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+   RETURNING *`,
+      [eventId, inviteeId, status, qrCode, isCheckIn, checkInAt, isCheckOut, checkOutAt, gift]
     );
     return rows[0];
   }
 
-  async findByEventIdAndUserId(eventId: string, userId: string): Promise<IInvitation | null> {
+  async findByEventIdAndUserId(eventId: string, inviteeId: string): Promise<IInvitation | null> {
     const result = await this.pool.query(
       `
       SELECT * FROM invitations 
       WHERE event_id = $1 
       AND invitee_id = $2
       `,
-      [eventId, userId]
+      [eventId, inviteeId]
     );
     return result.rows[0] || null;
   }
@@ -77,7 +79,7 @@ export class PostgresInvitationRepository implements IInvitationRepository {
   }
   
 
-  async updateStatusById(id: string, status: IInvitation["status"]): Promise<IInvitation> {
+  async updateStatusById(eventId: string, status: IInvitation["status"]): Promise<IInvitation> {
     const { rows } = await queryWithLogging(
       this.pool,
       `
@@ -86,7 +88,7 @@ export class PostgresInvitationRepository implements IInvitationRepository {
         WHERE id = $2
         RETURNING *
       `,
-      [status, id]
+      [status, eventId]
     );
     return rows[0] || null;
   }
@@ -95,7 +97,7 @@ export class PostgresInvitationRepository implements IInvitationRepository {
     const { rows } = await queryWithLogging(
       this.pool,
       `
-       SELECT id, event_id, invitee_id, status, qr_code, is_check_in, check_in_at, gift, created_at
+       SELECT *
        FROM invitations`
     );
     return rows;

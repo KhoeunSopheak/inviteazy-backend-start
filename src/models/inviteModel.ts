@@ -7,6 +7,8 @@ export interface IInvitation extends Document {
   qrCode: string;
   isCheckIn: boolean;
   checkInAt: Date | null;
+  isCheckOut: boolean;
+  checkOutAt: Date | null;
   gift: string | null;
   createdAt: Date;
 }
@@ -24,6 +26,8 @@ const InvitationSchema: Schema = new Schema<IInvitation>(
     qrCode: { type: String, required: true },
     isCheckIn: { type: Boolean, required: true, default: false },
     checkInAt: { type: Date, default: null },
+    isCheckOut: { type: Boolean, required: true, default: false },
+    checkOutAt: { type: Date, default: null },
     gift: { type: String, default: null },
   },
   {
