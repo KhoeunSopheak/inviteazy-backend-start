@@ -55,6 +55,14 @@ export class InviteService implements IInvitationService {
     }
     return checkin;
   }
+
+  async createCheckOut(eventId: string, inviteeId: string, gift: string): Promise<IInvitation> {
+    const checkout = await this.inviteRepository.createCheckOut(eventId, inviteeId, gift);
+    if (!checkout) {
+      throw new Error("Check-out failed.");
+    }
+    return checkout;
+  }
   
 }
 

@@ -132,4 +132,19 @@ export class InviteController {
       next(error);
     }
   }
+
+  async createCheckOut(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { eventId, inviteeId } = req.params;
+      const { gift } = req.body;
+      console.log("Event ID:", eventId);
+      console.log("Invitee ID:", inviteeId);
+      const checkout = await this.inviteService.createCheckOut(eventId, inviteeId, gift);
+      res.json(checkout);
+      return;
+    } catch (error) {
+      console.error("Error check-out:", error);
+      next(error);
+    }
+  }
 }

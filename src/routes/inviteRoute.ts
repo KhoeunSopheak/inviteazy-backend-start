@@ -10,14 +10,14 @@ import {
 export default function inviteRoutes(controller: InviteController): Router {
   const router = Router();
   
-  router.post("/events/:eventId",validateInviteBody, controller.createInvite.bind(controller));
-  router.get("/invitations", controller.getUserInvitaion.bind(controller));
-  router.get("/invitation/:eventId", controller.getInvitationById.bind(controller));
-  router.get("/events/:eventId/status", controller.countStatusByEventId.bind(controller));
-  router.patch("/invitations/:id",validateStatus, controller.updateStatusById.bind(controller));
-  router.patch("/invitations/:eventId",validateStatus, controller.updateStatusById.bind(controller));
-  router.get("/events/:eventId/status", controller.countStatusByEventId.bind(controller));
-  router.patch("/checkin/:eventId/:inviteeId", controller.createCheckin.bind(controller));
+  router.post("/events/:eventId", authMiddleware, validateInviteBody, controller.createInvite.bind(controller));
+  router.get("/invitations", authMiddleware, controller.getUserInvitaion.bind(controller));
+  router.get("/invitation/:eventId", authMiddleware, controller.getInvitationById.bind(controller));
+  router.patch("/invitations/:id", authMiddleware, validateStatus, controller.updateStatusById.bind(controller));
+  router.patch("/invitations/:eventId", authMiddleware, validateStatus, controller.updateStatusById.bind(controller));
+  router.get("/events/:eventId/status", authMiddleware, controller.countStatusByEventId.bind(controller));
+  router.patch("/checkin/:eventId/:inviteeId", authMiddleware, controller.createCheckin.bind(controller));
+  router.patch("/checkout/:eventId/:inviteeId", authMiddleware, controller.createCheckOut.bind(controller));
 
   return router;
 }
