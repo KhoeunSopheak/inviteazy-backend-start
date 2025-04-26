@@ -22,6 +22,7 @@ export interface IInvitationRepository {
   findInvitationById(eventId: string): Promise<IInvitation[]>;
   countStatusByEventId(eventId: string): Promise<Record<InvitationStatus, number>>;
   createCheckin(eventId: string, inviteeId: string): Promise<IInvitation>;
+  createCheckOut(eventId: string, inviteeId: string, gift: string): Promise<IInvitation>;
 }
 
 export interface IInvitationService {
@@ -32,4 +33,5 @@ export interface IInvitationService {
   getInvitationById(eventId: string): Promise<IInvitation[]>;
   countStatusByEventId(eventId: string): Promise<Record<InvitationStatus, number>>;
   createCheckin(eventId: string, inviteeId: string): Promise<IInvitation>;
+  createCheckOut(eventId: string, inviteeId: string, gift: string): Promise<IInvitation>;
 }

@@ -85,7 +85,7 @@ export class PostgresInvitationRepository implements IInvitationRepository {
       `
         UPDATE invitations
         SET status = $1
-        WHERE id = $2
+        WHERE event_id = $2
         RETURNING *
       `,
       [status, eventId]
@@ -112,6 +112,23 @@ export class PostgresInvitationRepository implements IInvitationRepository {
         WHERE event_id = $1 AND invitee_id = $2
         RETURNING *`,
       [eventId, inviteeId]
+    );
+    if (rows.length === 0) {
+      throw new Error("No invitation found for the given eventId and inviteeId");
+    }
+    return rows[0];
+  }
+
+  async createCheckOut(eventId: string, inviteeId: string, gift: string): Promise<IInvitation> {
+    const { rows } = await queryWithLogging(
+      this.pool,
+      `
+        UPDATE invitations
+        SET is_check_out = true, check_in_at = NOW(),
+        gift = $3
+        WHERE event_id = $1 AND invitee_id = $2
+        RETURNING *`,
+      [eventId, inviteeId, gift]
     );
     if (rows.length === 0) {
       throw new Error("No invitation found for the given eventId and inviteeId");
