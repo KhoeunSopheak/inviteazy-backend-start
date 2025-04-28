@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import redisCache from "../services/cacheService";
 import { IInvitation, IInvitationService } from "../interfaces/inviteInterface";
+import { InvitationStatus } from "../utils/enum";
 
 export class InviteController {
   private inviteService: IInvitationService;
@@ -11,9 +12,11 @@ export class InviteController {
 
   async createInvite(req: Request, res: Response, next: NextFunction) {
     try {
-      const {inviteeId, status, isCheckIn, checkInAt, isCheckOut, checkOutAt, gift}: Omit<IInvitation, "id" | "eventId" | "qrCode"> = req.body;
-      const {eventId} = req.params;
-      console.log("======>",eventId);
+      const { inviteeId }: Omit<IInvitation, "id" | "eventId"> = req.body;
+      const { eventId } = req.params;
+  
+      console.log("======>", eventId);
+  
       const existingInvite = await this.inviteService.getByEventIdAndUserId(eventId, inviteeId);
       if (existingInvite) {
         res.status(409).json({
@@ -21,27 +24,29 @@ export class InviteController {
         });
         return;
       }
-      const qrCode = `https://e-invitation.com/qr/event=${eventId}/invitee=${inviteeId}`;
-      const newInvites = await this.inviteService.createInvite({
+  
+      const newInvite = await this.inviteService.createInvite({
         eventId,
         inviteeId,
-        status,
-        qrCode,
-        isCheckIn,
-        checkInAt,
-        isCheckOut,
-        checkOutAt,
-        gift
+        status: InvitationStatus.PENDING,
+        qrCode: `https://e-invitation.com/qr/event=${eventId}/invitee=${inviteeId}`,
+        isCheckIn: false,
+        checkInAt: null,
+        isCheckOut: false,
+        checkOutAt: null,
+        gift: null,
       });
+  
       res.status(201).json({
         message: "Invite was created.",
-        data: newInvites,
+        data: newInvite,
       });
     } catch (err) {
       console.error("Create Invite Error:", err);
       next(err);
     }
   }
+  
   
   async getUserInvitaion(req: Request, res: Response, next: NextFunction) {
     try {

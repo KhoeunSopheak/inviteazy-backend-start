@@ -3,4 +3,5 @@ export enum InvitationStatus {
     MAYBE = "maybe",
     NO = "no",
     BUSY = "busy",
+    PENDING = "pending"
   }
