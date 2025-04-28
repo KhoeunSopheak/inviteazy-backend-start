@@ -29,6 +29,7 @@ const port = 3003;
 
 // Switch connection to database
 // connectMongoDB();
+// connectMysqlDb();
 const pgPool = connectPostgresDb();
 // const mysqlPool = connectMysqlDb();
 

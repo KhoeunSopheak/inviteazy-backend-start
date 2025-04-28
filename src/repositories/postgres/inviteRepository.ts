@@ -69,6 +69,7 @@ export class PostgresInvitationRepository implements IInvitationRepository {
       [InvitationStatus.MAYBE]: 0,
       [InvitationStatus.NO]: 0,
       [InvitationStatus.BUSY]: 0,
+      [InvitationStatus.PENDING]: 0,
     };
     for (const row of rows) {
       const status = row.status as InvitationStatus;
