@@ -10,7 +10,7 @@ export const connectPostgresDb = (): Pool => {
     // port: process.env.POSTGRES_PORT ? parseInt(process.env.DB_PORT || "5432") : 5432,
 
     user: process.env.POSTGRES_USER,   
-    host: process.env.HOST_DB,            
+    host: process.env.POSTGRES_HOST,            
     database: process.env.POSTGRES_DB,   
     password: process.env.POSTGRES_PASSWORD, 
     port: Number(process.env.PORT)        

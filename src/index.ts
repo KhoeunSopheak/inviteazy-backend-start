@@ -25,7 +25,7 @@ import inviteRoute from "./routes/inviteRoute";
 dotenv.config();
 
 const app = express();
-const port = 3003;
+const port = 3000;
 
 // Switch connection to database
 // connectMongoDB();
@@ -37,13 +37,13 @@ const pgPool = connectPostgresDb();
 // const userRepository = new MongoUserRepository();
 const userRepository = new PostgresUserRepository(pgPool);
 
-// const eventRepository = new PostgresEventRepository(pgPool);
-const eventRepository = new MongoEventRepository();
+const eventRepository = new PostgresEventRepository(pgPool);
+// const eventRepository = new MongoEventRepository();
 const inviteRepository = new PostgresInvitationRepository(pgPool);
 
 // Services
 const userService = new UserService(userRepository);
-const eventService =  new EventService(eventRepository);
+const eventService = new EventService(eventRepository);
 const inviteService = new InviteService(inviteRepository);
 
 
