@@ -38,7 +38,7 @@ export class InviteController {
       });
   
       res.status(201).json({
-        message: "Invite was created.",
+        message: "Invite was created",
         data: newInvite,
       });
     } catch (err) {
@@ -51,7 +51,7 @@ export class InviteController {
   async getUserInvitaion(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await this.inviteService.getUserInvitations();
-      res.json({ message: "Get all users invited.", data: result });
+      res.json({ message: "Retrieve all Invitations", data: result });
       return;
     } catch (error) {
       next(error);
@@ -64,7 +64,7 @@ export class InviteController {
       const cacheData = await redisCache.get(cacheKey);
       if (cacheData) {
         res.json({
-          message: "Cache: Get invitee by eventId",
+          message: "Cache: Retrieve Invitees by Event ID",
           data: JSON.parse(cacheData),
         });
         return;
@@ -74,7 +74,7 @@ export class InviteController {
       const result = await this.inviteService.getInvitationById(eventId);
       if (result) {
         await redisCache.set(cacheKey, JSON.stringify(result), 360);
-        res.json({ message: "Api: Get invitatee by eventId", data: result });
+        res.json({ message: "Retrieve Invitees by Event ID", data: result });
       } else {
         res.status(404).json({ message: "Invitee not found" });
       }
@@ -89,7 +89,7 @@ export class InviteController {
       const cacheData = await redisCache.get(cacheKey);
       if (cacheData) {
         res.json({
-          message: "Cache: Get invitee by eventId",
+          message: "Cache: Retrieve total Invitees",
           data: JSON.parse(cacheData),
         });
         return;
@@ -99,7 +99,7 @@ export class InviteController {
       const result = await this.inviteService.countStatusByEventId(eventId);
       if (result) {
         await redisCache.set(cacheKey, JSON.stringify(result), 360);
-        res.json({ message: "Api: Get total invitatees ", data: result });
+        res.json({ message: "Retrieve total Invitees", data: result });
       } else {
         res.status(404).json({ message: "Invitee not found" });
       }
@@ -116,8 +116,8 @@ export class InviteController {
       if (!updatedInvite) {
         res.status(404).json({ message: "Invitation not found" });
       }
-        res.json(updatedInvite);
-        return; 
+      res.json({ message: "Update status successfully", data: updatedInvite });
+      return; 
     } catch (error) {
       console.error("Error updating status:", error);
       next(error);
@@ -130,7 +130,7 @@ export class InviteController {
       console.log("Event ID:", eventId);
       console.log("Invitee ID:", inviteeId);
       const checkin = await this.inviteService.createCheckin(eventId, inviteeId);
-      res.json(checkin);
+      res.json({ message: "Check in successfully", data: checkin });
       return;
     } catch (error) {
       console.error("Error check-in:", error);
@@ -145,7 +145,7 @@ export class InviteController {
       console.log("Event ID:", eventId);
       console.log("Invitee ID:", inviteeId);
       const checkout = await this.inviteService.createCheckOut(eventId, inviteeId, gift);
-      res.json(checkout);
+      res.json({ message: "Check out successfully", data: checkout });
       return;
     } catch (error) {
       console.error("Error check-out:", error);
