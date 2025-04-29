@@ -60,24 +60,10 @@ export class InviteController {
 
   async getInvitationById(req: Request, res: Response, next: NextFunction) {
     try {
-      const cacheKey = `invitation:${req.method}:${req.originalUrl}`;
-      const cacheData = await redisCache.get(cacheKey);
-      if (cacheData) {
-        res.json({
-          message: "Cache: Retrieve Invitees by Event ID",
-          data: JSON.parse(cacheData),
-        });
-        return;
-      }
       const { eventId } = req.params;
       console.log(eventId);
       const result = await this.inviteService.getInvitationById(eventId);
-      if (result) {
-        await redisCache.set(cacheKey, JSON.stringify(result), 360);
         res.json({ message: "Retrieve Invitees by Event ID", data: result });
-      } else {
-        res.status(404).json({ message: "Invitee not found" });
-      }
     } catch (error) {
       next(error);
     }
@@ -85,24 +71,10 @@ export class InviteController {
 
   async countStatusByEventId(req: Request, res: Response, next: NextFunction) {
     try{
-    const cacheKey = `invitation:${req.method}:${req.originalUrl}`;
-      const cacheData = await redisCache.get(cacheKey);
-      if (cacheData) {
-        res.json({
-          message: "Cache: Retrieve total Invitees",
-          data: JSON.parse(cacheData),
-        });
-        return;
-      }
       const { eventId } = req.params;
       console.log(eventId);
       const result = await this.inviteService.countStatusByEventId(eventId);
-      if (result) {
-        await redisCache.set(cacheKey, JSON.stringify(result), 360);
         res.json({ message: "Retrieve total Invitees", data: result });
-      } else {
-        res.status(404).json({ message: "Invitee not found" });
-      }
     } catch (error) {
       next(error);
     }
