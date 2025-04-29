@@ -40,7 +40,8 @@ export class EventController {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
-      res.status(201).json(newEvent);
+      res.status(201).json({ message: "Event was created", data: newEvent });
+      return;
     } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });

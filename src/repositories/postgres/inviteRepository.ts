@@ -125,7 +125,7 @@ export class PostgresInvitationRepository implements IInvitationRepository {
       this.pool,
       `
         UPDATE invitations
-        SET is_check_out = true, check_in_at = NOW(),
+        SET is_check_out = true, check_out_at = NOW(),
         gift = $3
         WHERE event_id = $1 AND invitee_id = $2
         RETURNING *`,
